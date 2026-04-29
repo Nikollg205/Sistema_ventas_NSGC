@@ -10,8 +10,8 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 public class Conexion {
     private final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private final String URL = "jdbc:mysql://localhost:3307/";
-    private final String DB = " dbsistema";
+    private final String URL = "jdbc:mysql://localhost:3308/";
+    private final String DB = "pruebaDB";
     private final String USER = "root";
     private final String PASSWORD = "";
     
@@ -20,7 +20,7 @@ public class Conexion {
     public Connection cadena;
     public static Conexion instancia;
     
-    public Conexion(){
+    private Conexion(){
      this.cadena = null;
      
     }
@@ -45,8 +45,10 @@ public class Conexion {
     }
     public synchronized static Conexion getInstancia(){
         if(instancia==null){
-            instancia = new Conexion();
+            instancia= new Conexion();
+        
         }
         return instancia;
+    
     }
   }

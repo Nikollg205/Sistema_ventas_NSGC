@@ -4,17 +4,14 @@
  */
 package entidades;
 
-/**
- *
- * @author nikol
- */
 public class Categoria {
     private int id;
     private String nombre;
     private String descripcion;
     private boolean activo;
     
-    //Constructor
+    
+    //Constructor 
 
     public Categoria() {
     }
@@ -54,11 +51,12 @@ public class Categoria {
         return activo;
     }
 
-    public void setActivo(boolean acttivo) {
-        this.activo = acttivo;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
     
-    //Metodo toString
+    
+   //Metodo toString 
 
     @Override
     public String toString() {
