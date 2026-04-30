@@ -5,6 +5,7 @@
 package presentacion;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.TableRowSorter;
 import negocio.CategoriaControl;
 
 /**
@@ -12,9 +13,10 @@ import negocio.CategoriaControl;
  * @author nikol
  */
 public class FrmCategoria extends javax.swing.JInternalFrame {
-
+    
     private final CategoriaControl CONTROL;
     private String accion;
+    private String nombreAnt;
 
     /**
      * Creates new form FrmCategoria
@@ -25,25 +27,29 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
         this.listar("");
         this.tabGeneral.setEnabledAt(1, false);
         this.accion = "Guardar";
+        txtId.setVisible(false);
     }
-
+    
     private void listar(String texto) {
         tablaListado.setModel(this.CONTROL.listar(texto));
+        TableRowSorter orden = new TableRowSorter(tablaListado.getModel());
+        tablaListado.setRowSorter(orden);
         lbTotalRegistros.setText("Mostrando" + this.CONTROL.totalMostrados() + "de un total de" + this.CONTROL.total());
         this.accion = "Guardar";
+        
     }
-
+    
     private void limpiar() {
         txtBuscar.setText("");
         txtDescripcion.setText("");
         
     }
-
+    
     private void mensajeError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Sistema", JOptionPane.ERROR_MESSAGE);
         
     }
-
+    
     private void mensajeOk(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Sistema", JOptionPane.INFORMATION_MESSAGE);
         
@@ -67,6 +73,9 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
         tablaListado = new javax.swing.JTable();
         lbTotalRegistros = new javax.swing.JLabel();
         btnNuevo = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
+        btnDesactivar = new javax.swing.JButton();
+        btnActivar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -76,6 +85,8 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setTitle("Categorias");
@@ -102,6 +113,15 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
         btnNuevo.setText("Nuevo");
         btnNuevo.addActionListener(this::btnNuevoActionPerformed);
 
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(this::btnEditarActionPerformed);
+
+        btnDesactivar.setText("Descativar");
+        btnDesactivar.addActionListener(this::btnDesactivarActionPerformed);
+
+        btnActivar.setText("Activar");
+        btnActivar.addActionListener(this::btnActivarActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -115,15 +135,21 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
                 .addComponent(btnBuscar)
                 .addGap(18, 18, 18)
                 .addComponent(btnNuevo)
-                .addContainerGap(174, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnEditar)
+                .addContainerGap(90, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1)
                 .addGap(87, 87, 87))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(36, 36, 36)
+                .addComponent(btnDesactivar)
+                .addGap(26, 26, 26)
+                .addComponent(btnActivar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lbTotalRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(276, 276, 276))
+                .addGap(115, 115, 115))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,11 +159,15 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
                     .addComponent(jLabel1)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscar)
-                    .addComponent(btnNuevo))
+                    .addComponent(btnNuevo)
+                    .addComponent(btnEditar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(45, 45, 45)
-                .addComponent(lbTotalRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbTotalRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDesactivar)
+                    .addComponent(btnActivar))
                 .addContainerGap(50, Short.MAX_VALUE))
         );
 
@@ -166,25 +196,34 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(102, 102, 102)
                         .addComponent(btnGuardar)
                         .addGap(18, 18, 18)
                         .addComponent(btnCancelar))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(17, 17, 17)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jLabel4))
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jLabel4))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(396, Short.MAX_VALUE))
+                                .addGap(136, 136, 136)
+                                .addComponent(jLabel5))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(55, 55, 55)
+                                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(340, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,7 +231,9 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -246,14 +287,31 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        if (txtNombre.getText().length() == 0) {
+        if (txtNombre.getText().length() == 0 || txtNombre.getText().length() > 20) {
             JOptionPane.showMessageDialog(this, "Debes ingresar un nombre, es obligatorio", "Sistema", JOptionPane.WARNING_MESSAGE);
             txtNombre.requestFocus();
             return;
         }
+        if (txtDescripcion.getText().length() > 250) {
+            JOptionPane.showMessageDialog(this, "La descripcion no debe ser mayor de 250 carateres");
+            txtDescripcion.requestFocus();
+            
+        }
         String resp;
         if (this.accion.equals("Editar")) {
             //editar
+            resp = this.CONTROL.actualizar(Integer.parseInt(txtId.getText()), txtNombre.getText(), this.nombreAnt, txtDescripcion.getText());
+            if (resp.equals("OK")) {
+                this.mensajeOk("Registrado correctamente");
+                this.limpiar();
+                this.listar("");
+                tabGeneral.setSelectedIndex(0);
+                tabGeneral.setEnabledAt(1, false);
+                tabGeneral.setEnabledAt(0, true);
+            } else {
+                this.mensajeError(resp);
+                
+            }
         } else {
             resp = this.CONTROL.insertar(txtNombre.getText(), txtDescripcion.getText());
             if (resp.equals("OK")) {
@@ -268,16 +326,84 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        if (tablaListado.getSelectedRowCount() == 1) {
+            String id = String.valueOf(tablaListado.getValueAt(tablaListado.getSelectedRow(), 0));
+            String nombre = String.valueOf(tablaListado.getValueAt(tablaListado.getSelectedRow(), 1));
+            this.nombreAnt = String.valueOf(tablaListado.getValueAt(tablaListado.getSelectedRow(), 1));
+            String descripcion = String.valueOf(tablaListado.getValueAt(tablaListado.getSelectedRow(), 2));
+            
+            txtId.setText(id);
+            txtNombre.setText(nombre);
+            txtDescripcion.setText(descripcion);
+            
+            tabGeneral.setEnabledAt(0, false);
+            tabGeneral.setEnabledAt(1, true);
+            tabGeneral.setSelectedIndex(1);
+            
+            this.accion = "Editar";
+            btnEditar.setText("Editar");
+            
+        } else {
+            this.mensajeError("Selcione un registro a editar");
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnDesactivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesactivarActionPerformed
+        if (tablaListado.getSelectedRowCount() == 1) {
+            String id = String.valueOf(tablaListado.getValueAt(tablaListado.getSelectedRow(), 0));
+            String nombre = String.valueOf(tablaListado.getValueAt(tablaListado.getSelectedRow(), 1));
+            
+            if (JOptionPane.showConfirmDialog(this, "¿Deseas desactivar el registro: " + nombre + "?", "Desactivar", JOptionPane.YES_OPTION) == 0) {
+                String resp = this.CONTROL.desactivar(Integer.parseInt(id));
+                if (resp.equals("OK")) {
+                    this.mensajeOk("Resgistro descativado");
+                    this.listar("");
+            }else{
+                    this.mensajeError(resp);
+                }
+            }
+            
+        } else {
+            this.mensajeError("Selccione 1 registro a desactivar");
+        }
+    }//GEN-LAST:event_btnDesactivarActionPerformed
+
+    private void btnActivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActivarActionPerformed
+        if (tablaListado.getSelectedRowCount() == 1) {
+            String id = String.valueOf(tablaListado.getValueAt(tablaListado.getSelectedRow(), 0));
+            String nombre = String.valueOf(tablaListado.getValueAt(tablaListado.getSelectedRow(), 1));
+            
+            if (JOptionPane.showConfirmDialog(this, "¿Deseas activar el registro: " + nombre + "?", "Activar", JOptionPane.YES_OPTION) == 0) {
+                String resp = this.CONTROL.activar(Integer.parseInt(id));
+                if (resp.equals("OK")) {
+                    this.mensajeOk("Resgistro activar");
+                    this.listar("");
+                    
+                }else{
+                    this.mensajeError(resp);
+                }
+            }
+            
+        } else {
+            this.mensajeError("Selccione 1 registro a activar");
+        }
+    }//GEN-LAST:event_btnActivarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActivar;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnDesactivar;
+    private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -287,6 +413,7 @@ public class FrmCategoria extends javax.swing.JInternalFrame {
     private javax.swing.JTable tablaListado;
     private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextArea txtDescripcion;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 }

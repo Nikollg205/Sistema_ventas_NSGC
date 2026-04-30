@@ -115,7 +115,7 @@ public int total() {
 @Override
 public boolean existe(String texto) {
     try {
-        ps = CON.conectar().prepareStatement("SELECT * FROM categoria WHERE nombre=?");
+        ps = CON.conectar().prepareStatement("SELECT nombre FROM categoria WHERE nombre=?");
         ps.setString(1, texto);
         rs = ps.executeQuery();
         return rs.next();
