@@ -18,6 +18,8 @@ public class Conexion {
     
     
     public Connection cadena;
+    private static Conexion instancia; // <-- instancia única
+    
     
     public Conexion(){
      this.cadena = null;
@@ -42,4 +44,10 @@ public class Conexion {
         }
     
     }
+    public static Conexion getInstancia() {
+        if (instancia == null) {
+            instancia = new Conexion();
+        }
+        return instancia;
   }
+}
